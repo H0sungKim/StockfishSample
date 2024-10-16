@@ -1,3 +1,9 @@
+/*
+  Stockfish in iOS
+  
+  
+*/
+
 #ifndef STOCKFISHWRAPPER_H_INCLUDED
 #define STOCKFISHWRAPPER_H_INCLUDED
 
@@ -8,7 +14,7 @@
 - (void)startEngine;
 - (void)sendCommand:(NSString *)command;
 - (void)resetEngine;
-@property (nonatomic, strong) void (^onResponse)(NSString *);
+@property (nonatomic, strong) void (^onResponse)(float);
 
 @end
 

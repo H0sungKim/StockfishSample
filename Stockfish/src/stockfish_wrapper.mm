@@ -1,3 +1,8 @@
+/*
+  Stockfish in iOS
+  
+  
+*/
 #import "StockfishWrapper.h"
 #include "bitboard.h"
 #include "evaluate.h"
@@ -15,7 +20,6 @@
     Stockfish::UCIEngine *uci;
 }
 @property (nonatomic, strong) NSThread *engineThread;
-@property (nonatomic, strong) NSMutableString *accumulatedOutput;
 @property (nonatomic, assign) BOOL isReady;
 @end
 
@@ -31,7 +35,6 @@
             perror("output pipe creation failed");
         }
         self.engineThread = [[NSThread alloc] initWithTarget:self selector:@selector(runEngine) object:nil];
-        self.accumulatedOutput = [[NSMutableString alloc] init];
         self.isReady = NO;
     }
     return self;
@@ -88,23 +91,39 @@
 }
 
 - (void)readOutput {
-    char buffer[4096];
+    char buffer[256];
     ssize_t count;
-
+    
     while (true) {
         count = read(outputPipe[0], buffer, sizeof(buffer) - 1);
         if (count > 0) {
             buffer[count] = '\0';
             NSString *output = [NSString stringWithUTF8String:buffer];
-//            [self.accumulatedOutput appendString:output];
-            self.onResponse([output copy]);
-            // Process each line to find relevant move information.
-//            [self processAndExtractMoves];
+//            NSLog(@"In objc @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+//            NSLog(@"%@", output);
+            if ([output containsString:@"Hosung.Kim"] && self.onResponse) {
+                self.onResponse([self processOutput:output]);
+            }
             
-            
+//            self.onResponse([self processOutput:output]);
         }
-        // Else part commented out as per your previous snippet.
     }
+}
+
+- (float)processOutput:(NSString *)output {
+//    NSLog(@"%@", output);
+    NSRange colonRange = [output rangeOfString:@":"];
+    if (colonRange.location != NSNotFound) {
+//        NSLog(@"ok");
+        // " : " 이후 부분을 잘라냄
+        NSString *numberString = [output substringFromIndex:colonRange.location + 1];
+//        NSLog(@"%@", numberString);
+        // 공백을 제거하고 double로 변환
+        numberString = [numberString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+//        NSLog(@"%f", [numberString floatValue]+1);
+        return [numberString floatValue];
+    }
+    return 0.0; // ":"가 없을 경우 기본값 0.0 반환
 }
 
 @end

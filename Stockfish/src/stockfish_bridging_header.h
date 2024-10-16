@@ -1,3 +1,9 @@
+/*
+  Stockfish in iOS
+  
+  
+*/
+
 #ifndef STOCKFISH_BRIDGING_HEADER_H_INCLUDED
 #define STOCKFISH_BRIDGING_HEADER_H_INCLUDED
 

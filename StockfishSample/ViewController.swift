@@ -37,10 +37,7 @@ class ChessEngine {
         stockfishWrapper.startEngine()
         stockfishWrapper.onResponse = { [weak self] output in
             guard let self = self else { return }
-            if let output = output {
-                NSLog(output)
-                
-            }
+            NSLog("\(output*100)")
         }
         sendInitCommand()
     }
